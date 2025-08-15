@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Driver;
+use App\Entity\Order;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -35,5 +36,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Logistic Providers', 'fas fa-truck', LogisticProvider::class);
         yield MenuItem::linkToCrud('Drivers', 'fas fa-user', Driver::class);
         yield MenuItem::linkToCrud('Packages', 'fas fa-box', Package::class);
+        yield MenuItem::linkToCrud('Orders', 'fas fa-file', Order::class);
     }
 }

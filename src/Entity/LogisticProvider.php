@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Enums\LogisticProviderType;
 use App\Repository\LogisticProviderRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LogisticProviderRepository::class)]
@@ -22,6 +24,17 @@ class LogisticProvider
 
     #[ORM\Column(enumType: LogisticProviderType::class)]
     private ?LogisticProviderType $type = null;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'logisticProvider')]
+    private Collection $orders;
+
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,6 +73,36 @@ class LogisticProvider
     public function setType(LogisticProviderType $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setLogisticProvider($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getLogisticProvider() === $this) {
+                $order->setLogisticProvider(null);
+            }
+        }
 
         return $this;
     }
