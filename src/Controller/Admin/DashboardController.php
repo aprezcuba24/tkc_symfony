@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Product;
 use App\Entity\Place;
 use App\Entity\LogisticProvider;
+use App\Entity\Package;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
@@ -33,5 +34,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Places', 'fas fa-location-dot', Place::class);
         yield MenuItem::linkToCrud('Logistic Providers', 'fas fa-truck', LogisticProvider::class);
         yield MenuItem::linkToCrud('Drivers', 'fas fa-user', Driver::class);
+        yield MenuItem::linkToCrud('Packages', 'fas fa-box', Package::class);
     }
 }
