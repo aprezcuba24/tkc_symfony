@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -17,6 +18,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $this->loadUsers($manager);
+        $this->loadProducts($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
@@ -43,5 +45,33 @@ class AppFixtures extends Fixture
             ['123', 'tom_admin@tkc.com', [User::ROLE_ADMIN]],
             ['123', 'john_user@tkc.com', [User::ROLE_USER]],
         ];
+    }
+
+    //Create a function to return some products
+    private function getProductData(): array
+    {
+        return [
+            // $productData = [$name, $description];
+            ['iPhone 15 Pro', '6.1-inch Super Retina XDR display, A17 Pro chip, and advanced camera system'],
+            ['Samsung Galaxy S23 Ultra', '6.8-inch Dynamic AMOLED display, Snapdragon 8 Gen 2, 200MP camera'],
+            ['Sony WH-1000XM5', 'Premium wireless noise-canceling headphones with 30-hour battery life'],
+            ['Dell XPS 15', '15.6-inch 4K UHD+ touch display, Intel Core i9, 32GB RAM, 1TB SSD'],
+            ['Apple Watch Series 9', 'Advanced health monitoring, GPS, and always-on Retina display'],
+        ];
+    }
+
+    private function loadProducts(ObjectManager $manager): void
+    {
+        foreach ($this->getProductData() as [$name, $description]) {
+            $product = new Product();
+            $product->setName($name);
+            $product->setDescription($description);
+
+            $manager->persist($product);
+
+            $this->addReference($name, $product);
+        }
+
+        $manager->flush();
     }
 }
