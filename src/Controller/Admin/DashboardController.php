@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Product;
 use App\Entity\Place;
+use App\Entity\LogisticProvider;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
@@ -29,5 +30,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Products', 'fas fa-list', Product::class);
         yield MenuItem::linkToCrud('Places', 'fas fa-location-dot', Place::class);
+        yield MenuItem::linkToCrud('Logistic Providers', 'fas fa-truck', LogisticProvider::class);
     }
 }

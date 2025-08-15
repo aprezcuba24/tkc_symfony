@@ -8,6 +8,8 @@ use App\Entity\Place;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Entity\Enums\LogisticProviderType;
+use App\Entity\LogisticProvider;
 
 class AppFixtures extends Fixture
 {
@@ -21,6 +23,7 @@ class AppFixtures extends Fixture
         $this->loadUsers($manager);
         $this->loadProducts($manager);
         $this->loadPlaces($manager);
+        $this->loadLogisticProviders($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
@@ -99,6 +102,32 @@ class AppFixtures extends Fixture
             $manager->persist($place);
 
             $this->addReference($name, $place);
+        }
+
+        $manager->flush();
+    }
+
+    private function getLogisticProviderData(): array
+    {
+        return [
+            // $logisticProviderData = [$name, $type];
+            ['Centro logistico 1', LogisticProviderType::CD],
+            ['Centro logistico 2', LogisticProviderType::CAP],
+            ['PYME 1', LogisticProviderType::PYME],
+        ];
+    }
+
+    private function loadLogisticProviders(ObjectManager $manager): void
+    {
+        foreach ($this->getLogisticProviderData() as [$name, $type]) {
+            $logisticProvider = new LogisticProvider();
+            $logisticProvider->setName($name);
+            $logisticProvider->setDescription("Description for $name");
+            $logisticProvider->setType($type);
+
+            $manager->persist($logisticProvider);
+
+            $this->addReference($name, $logisticProvider);
         }
 
         $manager->flush();
