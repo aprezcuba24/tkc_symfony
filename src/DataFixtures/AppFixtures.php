@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Driver;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Entity\Place;
@@ -24,6 +25,7 @@ class AppFixtures extends Fixture
         $this->loadProducts($manager);
         $this->loadPlaces($manager);
         $this->loadLogisticProviders($manager);
+        $this->loadDrivers($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
@@ -128,6 +130,31 @@ class AppFixtures extends Fixture
             $manager->persist($logisticProvider);
 
             $this->addReference($name, $logisticProvider);
+        }
+
+        $manager->flush();
+    }
+
+    private function getDriverData(): array
+    {
+        return [
+            // $driverData = [$name, $description];
+            ['John Smith', 'Experienced driver with 10+ years of service, specializes in long-haul routes'],
+            ['Maria Garcia', 'Certified safety driver with excellent customer service ratings'],
+            ['David Kim', 'New team member with background in logistics and navigation']
+        ];
+    }
+
+    private function loadDrivers(ObjectManager $manager): void
+    {
+        foreach ($this->getDriverData() as [$name, $description]) {
+            $driver = new Driver();
+            $driver->setName($name);
+            $driver->setDescription($description);
+
+            $manager->persist($driver);
+
+            $this->addReference($name, $driver);
         }
 
         $manager->flush();
