@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Product;
 use App\Entity\User;
+use App\Entity\Place;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -19,6 +20,7 @@ class AppFixtures extends Fixture
     {
         $this->loadUsers($manager);
         $this->loadProducts($manager);
+        $this->loadPlaces($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
@@ -70,6 +72,33 @@ class AppFixtures extends Fixture
             $manager->persist($product);
 
             $this->addReference($name, $product);
+        }
+
+        $manager->flush();
+    }
+
+    private function getPlaceData(): array
+    {
+        return [
+            // $placeData = [$name, $description];
+            ['Habana', 'Habana'],
+            ['Bayamo', 'Granma'],
+            ['Matanzas', 'Matanzas'],
+            ['Camaguey', 'Camaguey'],
+            ['Cienfuegos', 'Cienfuegos'],
+        ];
+    }
+
+    private function loadPlaces(ObjectManager $manager): void
+    {
+        foreach ($this->getPlaceData() as [$name, $description]) {
+            $place = new Place();
+            $place->setName($name);
+            $place->setDescription($description);
+
+            $manager->persist($place);
+
+            $this->addReference($name, $place);
         }
 
         $manager->flush();
