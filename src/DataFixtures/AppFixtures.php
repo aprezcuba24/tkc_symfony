@@ -2,11 +2,15 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Driver;
 use App\Entity\Product;
 use App\Entity\User;
+use App\Entity\Place;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Entity\Enums\LogisticProviderType;
+use App\Entity\LogisticProvider;
 
 class AppFixtures extends Fixture
 {
@@ -19,6 +23,9 @@ class AppFixtures extends Fixture
     {
         $this->loadUsers($manager);
         $this->loadProducts($manager);
+        $this->loadPlaces($manager);
+        $this->loadLogisticProviders($manager);
+        $this->loadDrivers($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
@@ -70,6 +77,84 @@ class AppFixtures extends Fixture
             $manager->persist($product);
 
             $this->addReference($name, $product);
+        }
+
+        $manager->flush();
+    }
+
+    private function getPlaceData(): array
+    {
+        return [
+            // $placeData = [$name, $description];
+            ['Habana', 'Habana'],
+            ['Bayamo', 'Granma'],
+            ['Matanzas', 'Matanzas'],
+            ['Camaguey', 'Camaguey'],
+            ['Cienfuegos', 'Cienfuegos'],
+        ];
+    }
+
+    private function loadPlaces(ObjectManager $manager): void
+    {
+        foreach ($this->getPlaceData() as [$name, $description]) {
+            $place = new Place();
+            $place->setName($name);
+            $place->setDescription($description);
+
+            $manager->persist($place);
+
+            $this->addReference($name, $place);
+        }
+
+        $manager->flush();
+    }
+
+    private function getLogisticProviderData(): array
+    {
+        return [
+            // $logisticProviderData = [$name, $type];
+            ['Centro logistico 1', LogisticProviderType::CD],
+            ['Centro logistico 2', LogisticProviderType::CAP],
+            ['PYME 1', LogisticProviderType::PYME],
+        ];
+    }
+
+    private function loadLogisticProviders(ObjectManager $manager): void
+    {
+        foreach ($this->getLogisticProviderData() as [$name, $type]) {
+            $logisticProvider = new LogisticProvider();
+            $logisticProvider->setName($name);
+            $logisticProvider->setDescription("Description for $name");
+            $logisticProvider->setType($type);
+
+            $manager->persist($logisticProvider);
+
+            $this->addReference($name, $logisticProvider);
+        }
+
+        $manager->flush();
+    }
+
+    private function getDriverData(): array
+    {
+        return [
+            // $driverData = [$name, $description];
+            ['John Smith', 'Experienced driver with 10+ years of service, specializes in long-haul routes'],
+            ['Maria Garcia', 'Certified safety driver with excellent customer service ratings'],
+            ['David Kim', 'New team member with background in logistics and navigation']
+        ];
+    }
+
+    private function loadDrivers(ObjectManager $manager): void
+    {
+        foreach ($this->getDriverData() as [$name, $description]) {
+            $driver = new Driver();
+            $driver->setName($name);
+            $driver->setDescription($description);
+
+            $manager->persist($driver);
+
+            $this->addReference($name, $driver);
         }
 
         $manager->flush();
