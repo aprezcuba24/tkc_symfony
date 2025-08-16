@@ -74,6 +74,7 @@ services:
 
 networks:
   tkc_demo:
+    driver: bridge
 
 volumes:
   db_data:

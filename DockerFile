@@ -27,6 +27,7 @@ RUN install-php-extensions \
     gd \
     intl \
     pdo_mysql \
+    redis \
     zip
 
 # Composer
