@@ -13,20 +13,12 @@ use App\Entity\Product;
 use App\Entity\Place;
 use App\Entity\LogisticProvider;
 use App\Entity\Package;
-use Symfony\Component\Messenger\MessageBusInterface;
-use App\Message\OrderCreated;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
-    public function __construct(
-        private readonly MessageBusInterface $bus,
-    ) {
-    }
-
     public function index(): Response
     {
-        $this->bus->dispatch(new OrderCreated('Order created'));
         return $this->redirectToRoute('admin_product_index');
     }
 
