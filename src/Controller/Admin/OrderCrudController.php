@@ -5,7 +5,8 @@ namespace App\Controller\Admin;
 use App\Entity\Order;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class OrderCrudController extends AbstractCrudController
@@ -19,8 +20,10 @@ class OrderCrudController extends AbstractCrudController
     {
         return [
             TextField::new('code'),
-            TextEditorField::new('description'),
             ChoiceField::new('status'),
+            DateTimeField::new('createdAt'),
+            NumberField::new('weight'),
+            NumberField::new('volumen'),
         ];
     }
 }
