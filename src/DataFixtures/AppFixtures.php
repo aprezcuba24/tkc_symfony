@@ -3,6 +3,8 @@
 namespace App\DataFixtures;
 
 use App\Entity\Driver;
+use App\Entity\Enums\PackageType;
+use App\Entity\Package;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Entity\Place;
@@ -26,6 +28,7 @@ class AppFixtures extends Fixture
         $this->loadPlaces($manager);
         $this->loadLogisticProviders($manager);
         $this->loadDrivers($manager);
+        $this->loadPackages($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
@@ -158,5 +161,32 @@ class AppFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    private function loadPackages(ObjectManager $manager): void
+    {
+        foreach ($this->getPackageData() as [$name, $description, $createdAt, $type]) {
+            $package = new Package();
+            $package->setCode($name);
+            $package->setDescription($description);
+            $package->setCreatedAt($createdAt);
+            $package->setType($type);
+
+            $manager->persist($package);
+
+            $this->addReference($name, $package);
+        }
+
+        $manager->flush();
+    }
+
+    private function getPackageData(): array
+    {
+        return [
+            // $packageData = [$name, $description];
+            ['package_1', 'Description for Package 1', new \DateTimeImmutable(), PackageType::DISTRIBUTION],
+            ['package_2', 'Description for Package 2', new \DateTimeImmutable(), PackageType::SHIPPING],
+            ['package_3', 'Description for Package 3', new \DateTimeImmutable(), PackageType::DISTRIBUTION],
+        ];
     }
 }
