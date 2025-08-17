@@ -30,14 +30,13 @@ class PackageMessage
                 "weight" => $order->getWeight() || 0,
                 "volume" => $order->getVolumen() || 0,
                 "status" => $order->getStatus()->value,
-                "products" => [],
-                // "products" => array_map(function (Product $product) {
-                //     return [
-                //         "product_id" => $product->getId(),
-                //         "product_name" => $product->getName(),
-                //         "product_description" => $product->getDescription(),
-                //     ];
-                // }, $order->getProducts()->toArray()),
+                "products" => array_map(function (Product $product) {
+                    return [
+                        "product_id" => $product->getId(),
+                        "product_name" => $product->getName(),
+                        "product_description" => $product->getDescription(),
+                    ];
+                }, $order->getProducts()->toArray()),
             ];
         }, $package->getOrders()->toArray());
         $this->driver = [

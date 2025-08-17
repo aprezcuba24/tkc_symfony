@@ -199,13 +199,14 @@ class AppFixtures extends Fixture
 
     private function loadOrders(ObjectManager $manager): void
     {
-        foreach ($this->getOrderData() as [$code, $createdAt, $weight, $volumen, $status]) {
+        foreach ($this->getOrderData() as [$code, $createdAt, $weight, $volumen, $status, $products]) {
             $order = new Order();
             $order->setCode($code);
             $order->setCreatedAt($createdAt);
             $order->setWeight($weight);
             $order->setVolumen($volumen);
             $order->setStatus($status);
+            $order->setProducts($products);
 
             $manager->persist($order);
 
@@ -219,7 +220,14 @@ class AppFixtures extends Fixture
     {
         return [
             // $orderData = [$code, $description];
-            ['order_1', new \DateTimeImmutable(), 10, 20, OrderStatus::DISPATCH],
+            [
+                'order_1',
+                new \DateTimeImmutable(),
+                10,
+                20,
+                OrderStatus::DISPATCH,
+                [$this->getReference('iPhone 15 Pro', Product::class)]
+            ],
         ];
     }
 }
