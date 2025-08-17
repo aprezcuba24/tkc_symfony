@@ -3,7 +3,9 @@
 namespace App\DataFixtures;
 
 use App\Entity\Driver;
+use App\Entity\Enums\OrderStatus;
 use App\Entity\Enums\PackageType;
+use App\Entity\Order;
 use App\Entity\Package;
 use App\Entity\Product;
 use App\Entity\User;
@@ -28,6 +30,7 @@ class AppFixtures extends Fixture
         $this->loadPlaces($manager);
         $this->loadLogisticProviders($manager);
         $this->loadDrivers($manager);
+        $this->loadOrders($manager);
         $this->loadPackages($manager);
     }
 
@@ -165,12 +168,13 @@ class AppFixtures extends Fixture
 
     private function loadPackages(ObjectManager $manager): void
     {
-        foreach ($this->getPackageData() as [$name, $description, $createdAt, $type]) {
+        foreach ($this->getPackageData() as [$name, $description, $createdAt, $type, $orders]) {
             $package = new Package();
             $package->setCode($name);
             $package->setDescription($description);
             $package->setCreatedAt($createdAt);
             $package->setType($type);
+            $package->setOrders($orders);
 
             $manager->persist($package);
 
@@ -183,10 +187,39 @@ class AppFixtures extends Fixture
     private function getPackageData(): array
     {
         return [
-            // $packageData = [$name, $description];
-            ['package_1', 'Description for Package 1', new \DateTimeImmutable(), PackageType::DISTRIBUTION],
-            ['package_2', 'Description for Package 2', new \DateTimeImmutable(), PackageType::SHIPPING],
-            ['package_3', 'Description for Package 3', new \DateTimeImmutable(), PackageType::DISTRIBUTION],
+            [
+                'package_1',
+                'Description for Package 1',
+                new \DateTimeImmutable(),
+                PackageType::DISTRIBUTION,
+                [$this->getReference('order_1', Order::class)],
+            ],
+        ];
+    }
+
+    private function loadOrders(ObjectManager $manager): void
+    {
+        foreach ($this->getOrderData() as [$code, $createdAt, $weight, $volumen, $status]) {
+            $order = new Order();
+            $order->setCode($code);
+            $order->setCreatedAt($createdAt);
+            $order->setWeight($weight);
+            $order->setVolumen($volumen);
+            $order->setStatus($status);
+
+            $manager->persist($order);
+
+            $this->addReference($code, $order);
+        }
+
+        $manager->flush();
+    }
+
+    private function getOrderData(): array
+    {
+        return [
+            // $orderData = [$code, $description];
+            ['order_1', new \DateTimeImmutable(), 10, 20, OrderStatus::DISPATCH],
         ];
     }
 }

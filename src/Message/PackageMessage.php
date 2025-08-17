@@ -2,7 +2,9 @@
 
 namespace App\Message;
 
+use App\Entity\Order;
 use App\Entity\Package;
+use App\Entity\Product;
 
 class PackageMessage
 {
@@ -20,7 +22,24 @@ class PackageMessage
         $this->weight = $package->getWeight() || 0;
         $this->volume = $package->getVolumen() || 0;
         $this->event_type = $event_type;
-        $this->orders = [];
+        $this->orders = array_map(function (Order $order) {
+            return [
+                "order_id" => $order->getId(),
+                "order_code" => $order->getCode(),
+                "created_at" => $order->getCreatedAt()->format('Y-m-d H:i:s'),
+                "weight" => $order->getWeight() || 0,
+                "volume" => $order->getVolumen() || 0,
+                "status" => $order->getStatus()->value,
+                "products" => [],
+                // "products" => array_map(function (Product $product) {
+                //     return [
+                //         "product_id" => $product->getId(),
+                //         "product_name" => $product->getName(),
+                //         "product_description" => $product->getDescription(),
+                //     ];
+                // }, $order->getProducts()->toArray()),
+            ];
+        }, $package->getOrders()->toArray());
         $this->driver = [
           "driver_id" => 1,
           "name" => "Driver 1"

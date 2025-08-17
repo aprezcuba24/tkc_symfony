@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Enums\OrderStatus;
 use App\Repository\OrderRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -38,6 +40,17 @@ class Order
 
     #[ORM\Column(enumType: OrderStatus::class)]
     private ?OrderStatus $status = null;
+
+    /**
+     * @var Collection<int, Package>
+     */
+    #[ORM\ManyToMany(targetEntity: Package::class, mappedBy: 'orders')]
+    private Collection $packages;
+
+    public function __construct()
+    {
+        $this->packages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -136,6 +149,33 @@ class Order
     public function setStatus(OrderStatus $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Package>
+     */
+    public function getPackages(): Collection
+    {
+        return $this->packages;
+    }
+
+    public function addPackage(Package $package): static
+    {
+        if (!$this->packages->contains($package)) {
+            $this->packages->add($package);
+            $package->addOrder($this);
+        }
+
+        return $this;
+    }
+
+    public function removePackage(Package $package): static
+    {
+        if ($this->packages->removeElement($package)) {
+            $package->removeOrder($this);
+        }
 
         return $this;
     }
