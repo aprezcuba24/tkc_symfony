@@ -168,13 +168,14 @@ class AppFixtures extends Fixture
 
     private function loadPackages(ObjectManager $manager): void
     {
-        foreach ($this->getPackageData() as [$name, $description, $createdAt, $type, $orders]) {
+        foreach ($this->getPackageData() as [$name, $description, $createdAt, $type, $orders, $driver]) {
             $package = new Package();
             $package->setCode($name);
             $package->setDescription($description);
             $package->setCreatedAt($createdAt);
             $package->setType($type);
             $package->setOrders($orders);
+            $package->setDriver($driver);
 
             $manager->persist($package);
 
@@ -193,6 +194,7 @@ class AppFixtures extends Fixture
                 new \DateTimeImmutable(),
                 PackageType::DISTRIBUTION,
                 [$this->getReference('order_1', Order::class)],
+                $this->getReference('John Smith', Driver::class)
             ],
         ];
     }

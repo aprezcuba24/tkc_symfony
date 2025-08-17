@@ -33,15 +33,14 @@ class PackageMessage
                 "products" => array_map(function (Product $product) {
                     return [
                         "product_id" => $product->getId(),
-                        "product_name" => $product->getName(),
-                        "product_description" => $product->getDescription(),
+                        "name" => $product->getName(),
                     ];
                 }, $order->getProducts()->toArray()),
             ];
         }, $package->getOrders()->toArray());
         $this->driver = [
-          "driver_id" => 1,
-          "name" => "Driver 1"
+          "driver_id" => $package->getDriver()->getId(),
+          "name" => $package->getDriver()->getName(),
         ];
     }
 }

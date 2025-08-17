@@ -41,6 +41,9 @@ class Package
     #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'packages')]
     private Collection $orders;
 
+    #[ORM\ManyToOne(inversedBy: 'packages')]
+    private ?Driver $driver = null;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
@@ -152,6 +155,18 @@ class Package
     public function removeOrder(Order $order): static
     {
         $this->orders->removeElement($order);
+
+        return $this;
+    }
+
+    public function getDriver(): ?Driver
+    {
+        return $this->driver;
+    }
+
+    public function setDriver(?Driver $driver): static
+    {
+        $this->driver = $driver;
 
         return $this;
     }
