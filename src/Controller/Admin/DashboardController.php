@@ -13,12 +13,25 @@ use App\Entity\Product;
 use App\Entity\Place;
 use App\Entity\LogisticProvider;
 use App\Entity\Package;
+use Symfony\Component\Messenger\MessageBusInterface;
+use App\Message\PackageMessage;
+use Doctrine\ORM\EntityManagerInterface;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    public function __construct(
+        private MessageBusInterface $messageBus,
+        private EntityManagerInterface $entityManager
+    ) {}
     public function index(): Response
     {
+        // TODO: This is only a mock for testing...
+        $package = $this->entityManager->getRepository(Package::class)->findOneBy(['code' => 'package_1']);
+        $this->messageBus->dispatch(new PackageMessage(
+            'PACKAGE_DISTRIBUTION',
+            $package
+        ));
         return $this->redirectToRoute('admin_product_index');
     }
 

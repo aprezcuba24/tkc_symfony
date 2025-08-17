@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Enums\PackageType;
 use App\Repository\PackageRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,6 +34,20 @@ class Package
 
     #[ORM\Column(enumType: PackageType::class)]
     private ?PackageType $type = null;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'packages')]
+    private Collection $orders;
+
+    #[ORM\ManyToOne(inversedBy: 'packages')]
+    private ?Driver $driver = null;
+
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,6 +122,51 @@ class Package
     public function setType(PackageType $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+        }
+
+        return $this;
+    }
+
+    public function setOrders(array $orders): static
+    {
+        foreach ($orders as $order) {
+            $this->addOrder($order);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        $this->orders->removeElement($order);
+
+        return $this;
+    }
+
+    public function getDriver(): ?Driver
+    {
+        return $this->driver;
+    }
+
+    public function setDriver(?Driver $driver): static
+    {
+        $this->driver = $driver;
 
         return $this;
     }

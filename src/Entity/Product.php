@@ -19,6 +19,9 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    private ?Order $orderEntity = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,18 @@ class Product
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getOrderEntity(): ?Order
+    {
+        return $this->orderEntity;
+    }
+
+    public function setOrderEntity(?Order $orderEntity): static
+    {
+        $this->orderEntity = $orderEntity;
 
         return $this;
     }

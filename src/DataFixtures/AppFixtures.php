@@ -3,6 +3,10 @@
 namespace App\DataFixtures;
 
 use App\Entity\Driver;
+use App\Entity\Enums\OrderStatus;
+use App\Entity\Enums\PackageType;
+use App\Entity\Order;
+use App\Entity\Package;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Entity\Place;
@@ -26,6 +30,8 @@ class AppFixtures extends Fixture
         $this->loadPlaces($manager);
         $this->loadLogisticProviders($manager);
         $this->loadDrivers($manager);
+        $this->loadOrders($manager);
+        $this->loadPackages($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
@@ -158,5 +164,72 @@ class AppFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    private function loadPackages(ObjectManager $manager): void
+    {
+        foreach ($this->getPackageData() as [$name, $description, $createdAt, $type, $orders, $driver]) {
+            $package = new Package();
+            $package->setCode($name);
+            $package->setDescription($description);
+            $package->setCreatedAt($createdAt);
+            $package->setType($type);
+            $package->setOrders($orders);
+            $package->setDriver($driver);
+
+            $manager->persist($package);
+
+            $this->addReference($name, $package);
+        }
+
+        $manager->flush();
+    }
+
+    private function getPackageData(): array
+    {
+        return [
+            [
+                'package_1',
+                'Description for Package 1',
+                new \DateTimeImmutable(),
+                PackageType::DISTRIBUTION,
+                [$this->getReference('order_1', Order::class)],
+                $this->getReference('John Smith', Driver::class)
+            ],
+        ];
+    }
+
+    private function loadOrders(ObjectManager $manager): void
+    {
+        foreach ($this->getOrderData() as [$code, $createdAt, $weight, $volumen, $status, $products]) {
+            $order = new Order();
+            $order->setCode($code);
+            $order->setCreatedAt($createdAt);
+            $order->setWeight($weight);
+            $order->setVolumen($volumen);
+            $order->setStatus($status);
+            $order->setProducts($products);
+
+            $manager->persist($order);
+
+            $this->addReference($code, $order);
+        }
+
+        $manager->flush();
+    }
+
+    private function getOrderData(): array
+    {
+        return [
+            // $orderData = [$code, $description];
+            [
+                'order_1',
+                new \DateTimeImmutable(),
+                10,
+                20,
+                OrderStatus::DISPATCH,
+                [$this->getReference('iPhone 15 Pro', Product::class)]
+            ],
+        ];
     }
 }
