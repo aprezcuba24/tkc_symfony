@@ -187,16 +187,21 @@ class AppFixtures extends Fixture
 
     private function getPackageData(): array
     {
-        return [
-            [
-                'package_1',
-                'Description for Package 1',
+        $packages = [];
+        for ($i = 1; $i <= 10; $i += 2) {
+            $packages[] = [
+                'package_' . $i,
+                'Description for Package ' . $i,
                 new \DateTimeImmutable(),
                 PackageType::DISTRIBUTION,
-                [$this->getReference('order_1', Order::class)],
+                [
+                    $this->getReference('order_' . $i, Order::class),
+                    $this->getReference('order_' . ($i + 1), Order::class)
+                ],
                 $this->getReference('John Smith', Driver::class)
-            ],
-        ];
+            ];
+        }
+        return $packages;
     }
 
     private function loadOrders(ObjectManager $manager): void
@@ -220,16 +225,17 @@ class AppFixtures extends Fixture
 
     private function getOrderData(): array
     {
-        return [
-            // $orderData = [$code, $description];
-            [
-                'order_1',
+        $orders = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $orders[] = [
+                'order_' . $i,
                 new \DateTimeImmutable(),
                 10,
                 20,
                 OrderStatus::DISPATCH,
                 [$this->getReference('iPhone 15 Pro', Product::class)]
-            ],
-        ];
+            ];
+        }
+        return $orders;
     }
 }

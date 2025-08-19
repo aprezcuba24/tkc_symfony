@@ -44,6 +44,9 @@ class Package
     #[ORM\ManyToOne(inversedBy: 'packages')]
     private ?Driver $driver = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $wasSent = false;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
@@ -167,6 +170,18 @@ class Package
     public function setDriver(?Driver $driver): static
     {
         $this->driver = $driver;
+
+        return $this;
+    }
+
+    public function isWasSent(): ?bool
+    {
+        return $this->wasSent;
+    }
+
+    public function setWasSent(?bool $wasSent): static
+    {
+        $this->wasSent = $wasSent;
 
         return $this;
     }
