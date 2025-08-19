@@ -188,7 +188,7 @@ class AppFixtures extends Fixture
     private function getPackageData(): array
     {
         $packages = [];
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 10; $i += 2) {
             $packages[] = [
                 'package_' . $i,
                 'Description for Package ' . $i,

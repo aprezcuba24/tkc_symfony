@@ -13,26 +13,13 @@ use App\Entity\Product;
 use App\Entity\Place;
 use App\Entity\LogisticProvider;
 use App\Entity\Package;
-use Symfony\Component\Messenger\MessageBusInterface;
-use App\Message\PackageMessage;
-use Doctrine\ORM\EntityManagerInterface;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
-    public function __construct(
-        private MessageBusInterface $messageBus,
-        private EntityManagerInterface $entityManager
-    ) {}
     public function index(): Response
     {
-        // TODO: This is only a mock for testing...
-        $package = $this->entityManager->getRepository(Package::class)->findOneBy(['code' => 'package_1']);
-        $this->messageBus->dispatch(new PackageMessage(
-            'PACKAGE_DISTRIBUTION',
-            $package
-        ));
-        return $this->redirectToRoute('admin_product_index');
+        return $this->redirectToRoute('admin_package_index');
     }
 
     public function configureDashboard(): Dashboard
@@ -44,11 +31,11 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::linkToCrud('Packages', 'fas fa-box', Package::class);
         yield MenuItem::linkToCrud('Products', 'fas fa-list', Product::class);
         yield MenuItem::linkToCrud('Places', 'fas fa-location-dot', Place::class);
         yield MenuItem::linkToCrud('Logistic Providers', 'fas fa-truck', LogisticProvider::class);
         yield MenuItem::linkToCrud('Drivers', 'fas fa-user', Driver::class);
-        yield MenuItem::linkToCrud('Packages', 'fas fa-box', Package::class);
         yield MenuItem::linkToCrud('Orders', 'fas fa-file', Order::class);
     }
 }
