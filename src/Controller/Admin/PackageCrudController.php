@@ -3,12 +3,14 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Package;
+use App\Services\PackageService;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminAction;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
@@ -17,6 +19,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PackageCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private PackageService $packageService
+    ) {}
     public static function getEntityFqcn(): string
     {
         return Package::class;
@@ -25,7 +30,7 @@ class PackageCrudController extends AbstractCrudController
     #[AdminAction(routePath: '/send-to-transport', routeName: 'send_to_transport', methods: ['GET', 'POST'])]
     public function sendToTransport(AdminContext $context): Response {
         $package = $context->getEntity()->getInstance();
-        
+        $this->packageService->sendPackageToTransport($package);
         $this->addFlash('success', 'Package sent to transport successfully ' . $package->getCode());
         $url = $this->generateUrl('admin_package_index');
         return $this->redirect($url);
@@ -39,6 +44,7 @@ class PackageCrudController extends AbstractCrudController
             ChoiceField::new('type'),
             NumberField::new('weight'),
             NumberField::new('volumen'),
+            BooleanField::new('wasSent')->renderAsSwitch(false),
         ];
     }
 
@@ -48,7 +54,8 @@ class PackageCrudController extends AbstractCrudController
             'Send To Transport',
             'fa fa-send'
         )
-            ->linkToCrudAction('sendToTransport');
+            ->linkToCrudAction('sendToTransport')
+            ->displayIf(fn (Package $package) => !$package->isWasSent());
         return $actions->add(Crud::PAGE_INDEX, $sendToTransport);
     }
 }
